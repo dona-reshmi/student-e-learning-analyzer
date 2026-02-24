@@ -2,20 +2,74 @@ import streamlit as st
 import joblib
 import numpy as np
 
-# Load model
+# ------------------------
+# PAGE CONFIG
+# ------------------------
+st.set_page_config(
+    page_title="AI Student Performance Analyzer",
+    page_icon="🎓",
+    layout="wide"
+)
+
+# ------------------------
+# CUSTOM CSS (Landing Page Style)
+# ------------------------
+st.markdown("""
+    <style>
+    .main {
+        background: linear-gradient(135deg, #1f4037, #99f2c8);
+    }
+    .hero {
+        text-align: center;
+        padding: 60px 20px 30px 20px;
+    }
+    .hero h1 {
+        font-size: 48px;
+        color: white;
+    }
+    .hero p {
+        font-size: 20px;
+        color: white;
+        opacity: 0.9;
+    }
+    .card {
+        background-color: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+        margin-top: 30px;
+    }
+    .stButton>button {
+        background-color: #1f4037;
+        color: white;
+        font-size: 18px;
+        border-radius: 10px;
+        padding: 10px 25px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ------------------------
+# HERO SECTION
+# ------------------------
+st.markdown("""
+    <div class="hero">
+        <h1>🎓 AI Student Performance Analyzer</h1>
+        <p>Smart Academic Insights Powered by Machine Learning</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# ------------------------
+# LOAD MODEL
+# ------------------------
 model = joblib.load("student_model.pkl")
 
-st.set_page_config(page_title="Student Performance Analyzer", page_icon="🎓", layout="centered")
+# ------------------------
+# INPUT CARD
+# ------------------------
+st.markdown('<div class="card">', unsafe_allow_html=True)
 
-st.title("🎓 AI Student Performance Analyzer")
-st.markdown("### Smart Academic Performance Prediction System")
-st.markdown("---")
-
-st.write("Adjust the student engagement levels below:")
-
-# ===============================
-# INPUT SECTION (2 Columns)
-# ===============================
+st.subheader("📊 Enter Student Engagement Details")
 
 col1, col2 = st.columns(2)
 
@@ -31,77 +85,47 @@ with col2:
     platform_engagement = st.slider("📢 Platform Engagement", 0, 50)
     discussion_activity = st.slider("🗣 Discussion Activity", 0, 100)
 
-# Attendance Encoding (Correct)
-# Above-7 -> 0
-# Under-7 -> 1
-if attendance_label == "Under 7 Absences":
-    absence_days = 1
-else:
-    absence_days = 0
+# Attendance Encoding
+absence_days = 1 if attendance_label == "Under 7 Absences" else 0
 
-# ===============================
-# FIXED VALUES (same as training)
-# ===============================
+st.markdown("<br>", unsafe_allow_html=True)
 
-gender = 1
-nationality = 4
-birthplace = 4
-stage = 2
-grade = 1
-section = 0
-topic = 7
-semester = 0
-relation = 0
-parent_answer = 1
-parent_satisfaction = 1
+# ------------------------
+# PREDICTION BUTTON
+# ------------------------
+if st.button("🚀 Analyze Now"):
 
-st.markdown("---")
-
-# ===============================
-# PREDICTION
-# ===============================
-
-if st.button("🚀 Analyze Performance"):
-
-    input_data = np.array([[gender, nationality, birthplace, stage, grade,
-                            section, topic, semester, relation,
+    # Fixed values (same as training)
+    input_data = np.array([[1, 4, 4, 2, 1,
+                            0, 7, 0, 0,
                             participation, online_activity,
                             platform_engagement, discussion_activity,
-                            parent_answer, parent_satisfaction,
+                            1, 1,
                             absence_days]])
 
     prediction = model.predict(input_data)
     probabilities = model.predict_proba(input_data)
-
     confidence = round(np.max(probabilities) * 100, 2)
 
-    st.markdown("## 📊 Prediction Result")
-
-    # Correct Mapping
-    # 0 -> High
-    # 1 -> Low
-    # 2 -> Medium
+    st.markdown("---")
+    st.subheader("📈 Prediction Result")
 
     if prediction[0] == 0:
-        st.success(f"🎉 High Performance Student ({confidence}% Confidence)")
+        st.success(f"🌟 High Performance Student")
         st.progress(100)
-        st.write("✅ Excellent engagement and strong academic behavior.")
-        st.write("🔹 Keep maintaining participation and consistency.")
+        st.write(f"Confidence Level: {confidence}%")
+        st.write("Excellent academic engagement and consistency detected.")
 
     elif prediction[0] == 2:
-        st.warning(f"🙂 Medium Performance Student ({confidence}% Confidence)")
+        st.warning(f"🙂 Medium Performance Student")
         st.progress(60)
-        st.write("⚡ Moderate academic engagement detected.")
-        st.write("🔹 Improve class participation and online activity.")
-        st.write("🔹 Try reducing absence days.")
+        st.write(f"Confidence Level: {confidence}%")
+        st.write("Moderate performance. Improving participation can boost results.")
 
     else:
-        st.error(f"⚠ Poor Performance Student ({confidence}% Confidence)")
+        st.error(f"⚠ Poor Performance Student")
         st.progress(30)
-        st.write("🚨 Low engagement level detected.")
-        st.write("🔹 Increase participation in discussions.")
-        st.write("🔹 Access more learning resources.")
-        st.write("🔹 Improve attendance consistency.")
+        st.write(f"Confidence Level: {confidence}%")
+        st.write("Low engagement detected. Increasing activity and attendance is recommended.")
 
-    st.markdown("---")
-    st.markdown("### 🤖 Model Accuracy: 86.45%")
+st.markdown('</div>', unsafe_allow_html=True)
