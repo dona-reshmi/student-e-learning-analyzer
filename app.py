@@ -5,18 +5,37 @@ import numpy as np
 # Load trained model
 model = joblib.load("student_model.pkl")
 
-st.title("🎓 Student E-Learning Performance Predictor")
+st.set_page_config(page_title="Student Performance Analyzer", page_icon="🎓")
 
-st.write("Enter student details below:")
+st.title("🎓 Student Academic Performance Analyzer")
+st.write("Fill in the student engagement details below to predict performance level.")
 
-# User Inputs
-raisedhands = st.slider("Raised Hands", 0, 100)
-visited_resources = st.slider("Visited Resources", 0, 100)
-announcements_view = st.slider("Announcements View", 0, 50)
-discussion = st.slider("Discussion Participation", 0, 100)
-absence_days = st.selectbox("Student Absence Days", [0, 1])
+st.markdown("---")
 
-# Fixed encoded values (same format used during training)
+# ===============================
+# USER-FRIENDLY INPUTS
+# ===============================
+
+participation = st.slider("📌 Class Participation Level", 0, 100)
+online_activity = st.slider("💻 Online Study Activity", 0, 100)
+platform_engagement = st.slider("📢 Platform Engagement (Announcements Checked)", 0, 50)
+discussion_activity = st.slider("🗣 Group Discussion Activity", 0, 100)
+
+attendance_label = st.selectbox(
+    "📅 Attendance Category",
+    ["Under 7 Absences", "More than 7 Absences"]
+)
+
+# Convert attendance to encoded value
+if attendance_label == "Under 7 Absences":
+    absence_days = 0
+else:
+    absence_days = 1
+
+# ===============================
+# FIXED VALUES (Same as training)
+# ===============================
+
 gender = 1
 nationality = 4
 birthplace = 4
@@ -29,21 +48,33 @@ relation = 0
 parent_answer = 1
 parent_satisfaction = 1
 
-# Prediction
-if st.button("Predict Performance"):
+st.markdown("---")
+
+# ===============================
+# PREDICTION BUTTON
+# ===============================
+
+if st.button("🔍 Predict Performance"):
 
     input_data = np.array([[gender, nationality, birthplace, stage, grade,
                             section, topic, semester, relation,
-                            raisedhands, visited_resources,
-                            announcements_view, discussion,
+                            participation, online_activity,
+                            platform_engagement, discussion_activity,
                             parent_answer, parent_satisfaction,
                             absence_days]])
 
     prediction = model.predict(input_data)
 
+    st.markdown("## 📊 Prediction Result")
+
     if prediction[0] == 2:
-        st.success("Predicted Class: High Performance 🎉")
+        st.success("🎉 High Performance Student")
+        st.write("This student shows strong academic engagement and learning behavior.")
+
     elif prediction[0] == 1:
-        st.warning("Predicted Class: Medium Performance 🙂")
+        st.warning("🙂 Medium Performance Student")
+        st.write("This student has moderate engagement and can improve with more participation.")
+
     else:
-        st.error("Predicted Class: Low Performance ⚠️")
+        st.error("⚠ Low Performance Student")
+        st.write("This student may need additional academic support and guidance.")
