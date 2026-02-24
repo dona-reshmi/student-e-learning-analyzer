@@ -2,35 +2,38 @@ import streamlit as st
 import joblib
 import numpy as np
 
-# Load trained model
+# Load model
 model = joblib.load("student_model.pkl")
 
-st.set_page_config(page_title="Student Performance Analyzer", page_icon="🎓")
+st.set_page_config(page_title="Student Performance Analyzer", page_icon="🎓", layout="centered")
 
-st.title("🎓 Student Academic Performance Analyzer")
-st.write("Fill in the student engagement details below to predict performance level.")
-
+st.title("🎓 AI Student Performance Analyzer")
+st.markdown("### Smart Academic Performance Prediction System")
 st.markdown("---")
 
+st.write("Adjust the student engagement levels below:")
+
 # ===============================
-# USER-FRIENDLY INPUTS
+# INPUT SECTION (2 Columns)
 # ===============================
 
-participation = st.slider("📌 Class Participation Level", 0, 100)
-online_activity = st.slider("💻 Online Study Activity", 0, 100)
-platform_engagement = st.slider("📢 Platform Engagement (Announcements Checked)", 0, 50)
-discussion_activity = st.slider("🗣 Group Discussion Activity", 0, 100)
+col1, col2 = st.columns(2)
 
-attendance_label = st.selectbox(
-    "📅 Attendance Category",
-    ["Under 7 Absences", "More than 7 Absences"]
-)
+with col1:
+    participation = st.slider("📌 Class Participation", 0, 100)
+    online_activity = st.slider("💻 Online Study Activity", 0, 100)
+    attendance_label = st.selectbox(
+        "📅 Attendance",
+        ["Under 7 Absences", "More than 7 Absences"]
+    )
 
-# ✅ Correct attendance encoding
-# LabelEncoder alphabetical:
+with col2:
+    platform_engagement = st.slider("📢 Platform Engagement", 0, 50)
+    discussion_activity = st.slider("🗣 Discussion Activity", 0, 100)
+
+# Attendance Encoding (Correct)
 # Above-7 -> 0
 # Under-7 -> 1
-
 if attendance_label == "Under 7 Absences":
     absence_days = 1
 else:
@@ -55,10 +58,10 @@ parent_satisfaction = 1
 st.markdown("---")
 
 # ===============================
-# PREDICTION BUTTON
+# PREDICTION
 # ===============================
 
-if st.button("🔍 Predict Performance"):
+if st.button("🚀 Analyze Performance"):
 
     input_data = np.array([[gender, nationality, birthplace, stage, grade,
                             section, topic, semester, relation,
@@ -68,22 +71,37 @@ if st.button("🔍 Predict Performance"):
                             absence_days]])
 
     prediction = model.predict(input_data)
+    probabilities = model.predict_proba(input_data)
+
+    confidence = round(np.max(probabilities) * 100, 2)
 
     st.markdown("## 📊 Prediction Result")
 
-    # ✅ Correct class mapping (based on LabelEncoder alphabetical order)
-    # H -> 0
-    # L -> 1
-    # M -> 2
+    # Correct Mapping
+    # 0 -> High
+    # 1 -> Low
+    # 2 -> Medium
 
     if prediction[0] == 0:
-        st.success("🎉 High Performance Student")
-        st.write("This student shows strong academic engagement and learning behavior.")
+        st.success(f"🎉 High Performance Student ({confidence}% Confidence)")
+        st.progress(100)
+        st.write("✅ Excellent engagement and strong academic behavior.")
+        st.write("🔹 Keep maintaining participation and consistency.")
 
     elif prediction[0] == 2:
-        st.warning("🙂 Medium Performance Student")
-        st.write("This student has moderate engagement and can improve with more participation.")
+        st.warning(f"🙂 Medium Performance Student ({confidence}% Confidence)")
+        st.progress(60)
+        st.write("⚡ Moderate academic engagement detected.")
+        st.write("🔹 Improve class participation and online activity.")
+        st.write("🔹 Try reducing absence days.")
 
     else:
-        st.error("⚠ Poor Performance Student")
-        st.write("This student may need additional academic support and guidance.")
+        st.error(f"⚠ Poor Performance Student ({confidence}% Confidence)")
+        st.progress(30)
+        st.write("🚨 Low engagement level detected.")
+        st.write("🔹 Increase participation in discussions.")
+        st.write("🔹 Access more learning resources.")
+        st.write("🔹 Improve attendance consistency.")
+
+    st.markdown("---")
+    st.markdown("### 🤖 Model Accuracy: 86.45%")
