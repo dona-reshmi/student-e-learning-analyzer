@@ -26,14 +26,17 @@ attendance_label = st.selectbox(
     ["Under 7 Absences", "More than 7 Absences"]
 )
 
-# Convert attendance to encoded value
+# ✅ CORRECT encoding based on LabelEncoder alphabetical order
+# Above-7 -> 0
+# Under-7 -> 1
+
 if attendance_label == "Under 7 Absences":
-    absence_days = 0
+    absence_days = 1   # Under-7
 else:
-    absence_days = 1
+    absence_days = 0   # Above-7
 
 # ===============================
-# FIXED VALUES (Same as training)
+# FIXED VALUES (same as training)
 # ===============================
 
 gender = 1
