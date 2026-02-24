@@ -26,14 +26,15 @@ attendance_label = st.selectbox(
     ["Under 7 Absences", "More than 7 Absences"]
 )
 
-# ✅ CORRECT encoding based on LabelEncoder alphabetical order
+# ✅ Correct attendance encoding
+# LabelEncoder alphabetical:
 # Above-7 -> 0
 # Under-7 -> 1
 
 if attendance_label == "Under 7 Absences":
-    absence_days = 1   # Under-7
+    absence_days = 1
 else:
-    absence_days = 0   # Above-7
+    absence_days = 0
 
 # ===============================
 # FIXED VALUES (same as training)
@@ -70,14 +71,19 @@ if st.button("🔍 Predict Performance"):
 
     st.markdown("## 📊 Prediction Result")
 
-    if prediction[0] == 2:
+    # ✅ Correct class mapping (based on LabelEncoder alphabetical order)
+    # H -> 0
+    # L -> 1
+    # M -> 2
+
+    if prediction[0] == 0:
         st.success("🎉 High Performance Student")
         st.write("This student shows strong academic engagement and learning behavior.")
 
-    elif prediction[0] == 1:
+    elif prediction[0] == 2:
         st.warning("🙂 Medium Performance Student")
         st.write("This student has moderate engagement and can improve with more participation.")
 
     else:
-        st.error("⚠ Low Performance Student")
+        st.error("⚠ Poor Performance Student")
         st.write("This student may need additional academic support and guidance.")
