@@ -41,16 +41,6 @@ st.markdown("""
     padding: 60px 20px 20px;
     position: relative;
 }
-.hero-eyebrow {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #63b3ed;
-    margin-bottom: 18px;
-    opacity: 0.9;
-}
 .hero-title {
     font-family: 'Playfair Display', serif;
     font-size: clamp(42px, 6vw, 72px);
@@ -245,7 +235,6 @@ div[data-baseweb="select"] > div {
 # --------------------------
 st.markdown("""
 <div class="hero-wrap">
-    <div class="hero-eyebrow">✦ Powered by Machine Learning ✦</div>
     <div class="hero-title">EduPulse</div>
     <div class="hero-sub">Intelligent analysis of student engagement patterns to predict academic performance with precision.</div>
 </div>
@@ -285,28 +274,26 @@ model = joblib.load("student_model.pkl")
 # --------------------------
 st.markdown('<div class="section-label">Student Input Parameters</div>', unsafe_allow_html=True)
 
-with st.container():
-    st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
+participation = st.slider("📌 Class Participation", 0, 100, 50,
+                          help="How actively the student participates in class")
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2, gap="large")
+online_activity = st.slider("💻 Online Study Activity", 0, 100, 50,
+                            help="Hours or frequency of online study sessions")
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-    with col1:
-        participation = st.slider("📌 Class Participation", 0, 100, 50,
-                                  help="How actively the student participates in class")
-        online_activity = st.slider("💻 Online Study Activity", 0, 100, 50,
-                                    help="Hours or frequency of online study sessions")
-        attendance_label = st.selectbox(
-            "📅 Attendance Record",
-            ["Under 7 Absences ✅", "More than 7 Absences ⚠️"]
-        )
+platform_engagement = st.slider("📢 Platform Engagement", 0, 50, 25,
+                                help="Activity score on the learning platform")
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-    with col2:
-        platform_engagement = st.slider("📢 Platform Engagement", 0, 50, 25,
-                                        help="Activity score on the learning platform")
-        discussion_activity = st.slider("🗣 Discussion Activity", 0, 100, 50,
-                                        help="Forum posts, Q&A participation, and peer interaction")
+discussion_activity = st.slider("🗣 Discussion Activity", 0, 100, 50,
+                                help="Forum posts, Q&A participation, and peer interaction")
+st.markdown("<div style='margin-bottom:16px'></div>", unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+attendance_label = st.selectbox(
+    "📅 Attendance Record",
+    ["Under 7 Absences ✅", "More than 7 Absences ⚠️"]
+)
 
 absence_days = 1 if "Under 7" in attendance_label else 0
 
@@ -371,3 +358,4 @@ st.markdown("""
     EDUPULSE · STUDENT E-LEARNING ANALYZER · BUILT WITH STREAMLIT & SCIKIT-LEARN
 </div>
 """, unsafe_allow_html=True)
+
