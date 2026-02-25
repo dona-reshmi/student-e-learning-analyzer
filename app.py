@@ -260,9 +260,9 @@ st.markdown("""
 model = joblib.load("student_model.pkl")
 
 # --------------------------
-# INPUT + BUTTON — all inside the same column for perfect alignment
+# INPUT + BUTTON — wider middle column
 # --------------------------
-_, mid, _ = st.columns([1, 2, 1])
+_, mid, _ = st.columns([0.5, 3, 0.5])
 
 with mid:
     st.markdown('<div class="section-label">Student Input Parameters</div>', unsafe_allow_html=True)
@@ -294,7 +294,7 @@ with mid:
 absence_days = 1 if "Under 7" in attendance_label else 0
 
 # --------------------------
-# RESULT — also in same column width
+# RESULT — same wider column
 # --------------------------
 if analyze:
     input_data = np.array([[1, 4, 4, 2, 1,
@@ -310,7 +310,7 @@ if analyze:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    _, res_col, _ = st.columns([1, 2, 1])
+    _, res_col, _ = st.columns([0.5, 3, 0.5])
     with res_col:
         st.markdown('<div class="section-label">Analysis Result</div>', unsafe_allow_html=True)
 
