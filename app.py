@@ -90,7 +90,7 @@ st.markdown("""
     background: rgba(99,179,237,0.2);
 }
 
-/* ---- METRIC CARDS (above sliders) ---- */
+/* ---- METRIC CARDS ---- */
 .metric-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -108,16 +108,6 @@ st.markdown("""
 .metric-icon { font-size: 22px; margin-bottom: 8px; }
 .metric-title { font-size: 11px; color: #8892a4; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
 .metric-hint { font-size: 13px; color: #c5cad8; font-weight: 300; }
-
-/* ---- GLASS PANEL ---- */
-.glass-panel {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 24px;
-    padding: 32px 32px 24px;
-    margin-bottom: 28px;
-    backdrop-filter: blur(10px);
-}
 
 /* ---- SLIDERS ---- */
 div[data-baseweb="slider"] label,
@@ -270,40 +260,42 @@ st.markdown("""
 model = joblib.load("student_model.pkl")
 
 # --------------------------
-# INPUT PANEL
+# INPUT + BUTTON — all inside the same column for perfect alignment
 # --------------------------
-st.markdown('<div class="section-label">Student Input Parameters</div>', unsafe_allow_html=True)
+_, mid, _ = st.columns([1, 2, 1])
 
-participation = st.slider("📌 Class Participation", 0, 100, 50,
-                          help="How actively the student participates in class")
-st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+with mid:
+    st.markdown('<div class="section-label">Student Input Parameters</div>', unsafe_allow_html=True)
 
-online_activity = st.slider("💻 Online Study Activity", 0, 100, 50,
-                            help="Hours or frequency of online study sessions")
-st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+    participation = st.slider("📌 Class Participation", 0, 100, 50,
+                              help="How actively the student participates in class")
+    st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-platform_engagement = st.slider("📢 Platform Engagement", 0, 50, 25,
-                                help="Activity score on the learning platform")
-st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+    online_activity = st.slider("💻 Online Study Activity", 0, 100, 50,
+                                help="Hours or frequency of online study sessions")
+    st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-discussion_activity = st.slider("🗣 Discussion Activity", 0, 100, 50,
-                                help="Forum posts, Q&A participation, and peer interaction")
-st.markdown("<div style='margin-bottom:16px'></div>", unsafe_allow_html=True)
+    platform_engagement = st.slider("📢 Platform Engagement", 0, 50, 25,
+                                    help="Activity score on the learning platform")
+    st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-attendance_label = st.selectbox(
-    "📅 Attendance Record",
-    ["Under 7 Absences ✅", "More than 7 Absences ⚠️"]
-)
+    discussion_activity = st.slider("🗣 Discussion Activity", 0, 100, 50,
+                                    help="Forum posts, Q&A participation, and peer interaction")
+    st.markdown("<div style='margin-bottom:16px'></div>", unsafe_allow_html=True)
+
+    attendance_label = st.selectbox(
+        "📅 Attendance Record",
+        ["Under 7 Absences ✅", "More than 7 Absences ⚠️"]
+    )
+
+    st.markdown("<div style='margin-bottom:12px'></div>", unsafe_allow_html=True)
+    analyze = st.button("⚡ Analyze Performance")
 
 absence_days = 1 if "Under 7" in attendance_label else 0
 
 # --------------------------
-# PREDICT
+# RESULT — also in same column width
 # --------------------------
-col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
-with col_btn2:
-    analyze = st.button("⚡ Analyze Performance")
-
 if analyze:
     input_data = np.array([[1, 4, 4, 2, 1,
                             0, 7, 0, 0,
@@ -317,38 +309,41 @@ if analyze:
     confidence = round(np.max(probabilities) * 100, 2)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Analysis Result</div>', unsafe_allow_html=True)
 
-    if prediction[0] == 0:
-        css_class = "result-high"
-        icon = "🌟"
-        label = "High Performance"
-        bar_color = "#48bb78"
-        message = "This student shows excellent engagement and is on track for outstanding academic outcomes."
-    elif prediction[0] == 2:
-        css_class = "result-mid"
-        icon = "📈"
-        label = "Medium Performance"
-        bar_color = "#ecc94b"
-        message = "This student shows moderate engagement. Targeted support could elevate their outcomes."
-    else:
-        css_class = "result-low"
-        icon = "⚠️"
-        label = "Needs Improvement"
-        bar_color = "#fc814a"
-        message = "This student may benefit from immediate intervention and personalized support strategies."
+    _, res_col, _ = st.columns([1, 2, 1])
+    with res_col:
+        st.markdown('<div class="section-label">Analysis Result</div>', unsafe_allow_html=True)
 
-    st.markdown(f"""
-    <div class="{css_class}">
-        <div class="result-icon">{icon}</div>
-        <div class="result-label">{label}</div>
-        <div class="conf-bar-wrap">
-            <div class="conf-bar-fill" style="width:{confidence}%; background: linear-gradient(90deg, {bar_color}, #9f7aea);"></div>
+        if prediction[0] == 0:
+            css_class = "result-high"
+            icon = "🌟"
+            label = "High Performance"
+            bar_color = "#48bb78"
+            message = "This student shows excellent engagement and is on track for outstanding academic outcomes."
+        elif prediction[0] == 2:
+            css_class = "result-mid"
+            icon = "📈"
+            label = "Medium Performance"
+            bar_color = "#ecc94b"
+            message = "This student shows moderate engagement. Targeted support could elevate their outcomes."
+        else:
+            css_class = "result-low"
+            icon = "⚠️"
+            label = "Needs Improvement"
+            bar_color = "#fc814a"
+            message = "This student may benefit from immediate intervention and personalized support strategies."
+
+        st.markdown(f"""
+        <div class="{css_class}">
+            <div class="result-icon">{icon}</div>
+            <div class="result-label">{label}</div>
+            <div class="conf-bar-wrap">
+                <div class="conf-bar-fill" style="width:{confidence}%; background: linear-gradient(90deg, {bar_color}, #9f7aea);"></div>
+            </div>
+            <div class="result-conf">Confidence: {confidence}%</div>
+            <p style="margin-top:18px; color:#8892a4; font-size:14px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.6;">{message}</p>
         </div>
-        <div class="result-conf">Confidence: {confidence}%</div>
-        <p style="margin-top:18px; color:#8892a4; font-size:14px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.6;">{message}</p>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
 # --------------------------
 # FOOTER
