@@ -272,7 +272,7 @@ model = joblib.load("student_model.pkl")
 # --------------------------
 # INPUT PANEL
 # --------------------------
-st.markdown('<div class="section-label">Student Input Parameters</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-label" style="padding-left: 22%;">Student Input Parameters</div>', unsafe_allow_html=True)
 
 _, mid, _ = st.columns([0.5, 2, 0.5])
 
@@ -303,8 +303,8 @@ absence_days = 1 if "Under 7" in attendance_label else 0
 # --------------------------
 # PREDICT
 # --------------------------
-col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
-with col_btn2:
+_, col_btn, _ = st.columns([0.5, 2, 0.5])
+with col_btn:
     analyze = st.button("⚡ Analyze Performance")
 
 if analyze:
