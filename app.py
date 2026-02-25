@@ -272,39 +272,36 @@ model = joblib.load("student_model.pkl")
 # --------------------------
 # INPUT PANEL
 # --------------------------
-st.markdown('<div class="section-label" style="padding-left: 22%;">Student Input Parameters</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Student Input Parameters</div>', unsafe_allow_html=True)
 
-_, mid, _ = st.columns([0.5, 2, 0.5])
+participation = st.slider("📌 Class Participation", 0, 100, 50,
+                          help="How actively the student participates in class")
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-with mid:
-    participation = st.slider("📌 Class Participation", 0, 100, 50,
-                              help="How actively the student participates in class")
-    st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+online_activity = st.slider("💻 Online Study Activity", 0, 100, 50,
+                            help="Hours or frequency of online study sessions")
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-    online_activity = st.slider("💻 Online Study Activity", 0, 100, 50,
-                                help="Hours or frequency of online study sessions")
-    st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+platform_engagement = st.slider("📢 Platform Engagement", 0, 50, 25,
+                                help="Activity score on the learning platform")
+st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
-    platform_engagement = st.slider("📢 Platform Engagement", 0, 50, 25,
-                                    help="Activity score on the learning platform")
-    st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+discussion_activity = st.slider("🗣 Discussion Activity", 0, 100, 50,
+                                help="Forum posts, Q&A participation, and peer interaction")
+st.markdown("<div style='margin-bottom:16px'></div>", unsafe_allow_html=True)
 
-    discussion_activity = st.slider("🗣 Discussion Activity", 0, 100, 50,
-                                    help="Forum posts, Q&A participation, and peer interaction")
-    st.markdown("<div style='margin-bottom:16px'></div>", unsafe_allow_html=True)
-
-    attendance_label = st.selectbox(
-        "📅 Attendance Record",
-        ["Under 7 Absences ✅", "More than 7 Absences ⚠️"]
-    )
+attendance_label = st.selectbox(
+    "📅 Attendance Record",
+    ["Under 7 Absences ✅", "More than 7 Absences ⚠️"]
+)
 
 absence_days = 1 if "Under 7" in attendance_label else 0
 
 # --------------------------
 # PREDICT
 # --------------------------
-_, col_btn, _ = st.columns([0.5, 2, 0.5])
-with col_btn:
+col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+with col_btn2:
     analyze = st.button("⚡ Analyze Performance")
 
 if analyze:
